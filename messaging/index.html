@@ -72,34 +72,67 @@ limitations under the License.
 <!-- Import and configure the Firebase SDK -->
 <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
 <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
-<script src="/__/firebase/8.2.5/firebase-app.js"></script>
-<script src="/__/firebase/8.2.5/firebase-messaging.js"></script>
-<script src="/__/firebase/init.js"></script>
+<!-- <script src="/__/firebase/8.0.0/firebase-app.js"></script>
+<script src="/__/firebase/8.0.0/firebase-messaging.js"></script>
+<script src="/__/firebase/init.js"></script> -->
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-messaging.js"></script>
+
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-analytics.js"></script>
 
 <script>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyAV3WooK-V3jnz-hb5_3RxUZ8_nr95e0mI",
+    authDomain: "tfs-id-platform.firebaseapp.com",
+    databaseURL: "https://tfs-id-platform.firebaseio.com",
+    projectId: "tfs-id-platform",
+    storageBucket: "tfs-id-platform.appspot.com",
+    messagingSenderId: "315615346351",
+    appId: "1:315615346351:web:85321ea1029ec383775e5a",
+    measurementId: "G-XHS3CKH161"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
+
+<script>
+  // [START get_messaging_object]
   // Retrieve Firebase Messaging object.
   const messaging = firebase.messaging();
+  // [END get_messaging_object]
 
   // IDs of divs that display registration token UI or request permission UI.
   const tokenDivId = 'token_div';
   const permissionDivId = 'permission_div';
 
+  // [START receive_message]
   // Handle incoming messages. Called when:
   // - a message is received while the app has focus
   // - the user clicks on an app notification created by a service worker
-  //   `messaging.onBackgroundMessage` handler.
+  //   `messaging.setBackgroundMessageHandler` handler.
   messaging.onMessage((payload) => {
     console.log('Message received. ', payload);
+    // [START_EXCLUDE]
     // Update the UI to include the received message.
     appendMessage(payload);
+    // [END_EXCLUDE]
   });
+  // [END receive_message]
 
   function resetUI() {
     clearMessages();
     showToken('loading...');
+    // [START get_token]
     // Get registration token. Initially this makes a network call, once retrieved
     // subsequent calls to getToken will return from cache.
-    messaging.getToken({vapidKey: '<YOUR_PUBLIC_VAPID_KEY_HERE>'}).then((currentToken) => {
+    messaging.getToken({vapidKey: 'BEOXxpMxeUcGpjowMYsWY2we-TggXkwI3GJlegJA1q9TrYQoqhW3Yr6JPpjElK_28oIF36X0-xipWRgWIMxBouI'}).then((currentToken) => {
       if (currentToken) {
         sendTokenToServer(currentToken);
         updateUIForPushEnabled(currentToken);
@@ -115,6 +148,7 @@ limitations under the License.
       showToken('Error retrieving registration token. ', err);
       setTokenSentToServer(false);
     });
+    // [END get_token]
   }
 
 
@@ -136,6 +170,7 @@ limitations under the License.
       console.log('Token already sent to server so won\'t send it again ' +
           'unless it changes');
     }
+
   }
 
   function isTokenSentToServer() {
@@ -157,34 +192,43 @@ limitations under the License.
 
   function requestPermission() {
     console.log('Requesting permission...');
+    // [START request_permission]
     Notification.requestPermission().then((permission) => {
       if (permission === 'granted') {
         console.log('Notification permission granted.');
         // TODO(developer): Retrieve a registration token for use with FCM.
+        // [START_EXCLUDE]
         // In many cases once an app has been granted notification permission,
         // it should update its UI reflecting this.
         resetUI();
+        // [END_EXCLUDE]
       } else {
         console.log('Unable to get permission to notify.');
       }
     });
+    // [END request_permission]
   }
 
   function deleteToken() {
-    // Delete registration token.
+    // Delete registraion token.
+    // [START delete_token]
     messaging.getToken().then((currentToken) => {
       messaging.deleteToken(currentToken).then(() => {
         console.log('Token deleted.');
         setTokenSentToServer(false);
+        // [START_EXCLUDE]
         // Once token is deleted update UI.
         resetUI();
+        // [END_EXCLUDE]
       }).catch((err) => {
         console.log('Unable to delete token. ', err);
       });
+      // [END delete_token]
     }).catch((err) => {
       console.log('Error retrieving registration token. ', err);
       showToken('Error retrieving registration token. ', err);
     });
+
   }
 
   // Add a message to the messages element.
