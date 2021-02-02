@@ -40,21 +40,21 @@
 
 
 
-// // If you would like to customize notifications that are received in the
-// // background (Web app is closed or not in browser focus) then you should
-// // implement this optional method.
-// // [START on_background_message]
-// messaging.onBackgroundMessage(function(payload) {
-//   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-//   // Customize notification here
-//   const notificationTitle = 'Background Message Title';
-//   const notificationOptions = {
-//     // body: 'Background Message body.',
-//     body: payload,
-//     icon: '/firebase-logo.png'
-//   };
+// If you would like to customize notifications that are received in the
+// background (Web app is closed or not in browser focus) then you should
+// implement this optional method.
+// [START on_background_message]
+messaging.onBackgroundMessage(function(payload) {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  // Customize notification here
+  const notificationTitle = 'Background Message Title';
+  const notificationOptions = {
+    // body: 'Background Message body.',
+    body: payload,
+    icon: '/firebase-logo.png'
+  };
 
-//   self.registration.showNotification(notificationTitle,
-//     notificationOptions);
-// });
-// // [END on_background_message]
+  self.registration.showNotification(notificationTitle,
+    notificationOptions);
+});
+// [END on_background_message]
